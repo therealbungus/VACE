@@ -1,0 +1,984 @@
+grf {
+    grfid: "KK\11\01";
+    name: string(STR_GRF_NAME);
+    desc: string(STR_GRF_DESC);
+    version: 4;
+    min_compatible_version: 4;
+    param 1 {
+        // real vs fiction
+    	rvf {
+    		type: int;
+    		name: string(STR_PARAM_RVF_NAME);
+    		desc: string(STR_PARAM_RVF_DESC);
+    		min_value: 0;
+    		max_value: 2;
+    		def_value: 0;
+    		names: {
+    			0: string(STR_PARAM_RVF_OPT_0);
+    			1: string(STR_PARAM_RVF_OPT_1);
+                2: string(STR_PARAM_RVF_OPT_2);
+    		};
+    	}
+    }
+}
+
+// see explanation here: https://newgrf-specs.tt-wiki.net/wiki/NML:Setting_base_costs
+basecost {
+ 	PR_BUILD_VEHICLE_AIRCRAFT: 1; 
+ 	PR_RUNNING_AIRCRAFT: 3;
+ }
+
+/* 64x16x64 */
+template tmpl_lg(x,y) {
+    //[left_x,      upper_y,    width,     height,     offset_x,     offset_y]
+	[ x+238,	y+0,	42, 48,	-21,	-24]
+	[ x+281,	y+0,	64, 48,	-32,	-24]
+	[ x+346,	y+0,	64, 32, -32,    -16]
+	[ x+411,	y+0,	64, 48,	-32,	-24]
+	[ x+0,	    y+0,	42, 48,	-21,	-24]
+	[ x+43,	    y+0,	64, 48,	-32,	-24]
+	[ x+108,	y+0,	64, 32, -32,    -16]
+	[ x+173,	y+0,	64, 48,	-32,	-24]
+}
+template tmpl_lg_purchase(x,y) {
+	[ x+108,	y+0,	64, 32, -32,    -16]
+}
+
+
+/* 48x16x48 */
+template tmpl_med(x,y) {
+    //[left_x,      upper_y,    width,     height,     offset_x,     offset_y]
+	[ x+180,	0+y,	32, 40,	-16,	-20]
+	[ x+213,	0+y,	48, 40,	-24,	-20]
+	[ x+262,	0+y,	48, 28, -24,    -14]
+	[ x+311,	0+y,	48, 40,	-24,	-20]
+	[ x+0,	    0+y,	32, 40,	-16,	-20]
+	[ x+33,	    0+y,	48, 40,	-24,	-20]
+	[ x+82,	    0+y,	48, 28, -24,    -14]
+	[ x+131,	0+y,	48, 40,	-24,	-20]
+}
+
+template tmpl_med_purchase(x,y) {
+	[ x+82,	    0+y,	48, 28, -24,    -14]
+}
+
+/* 48x10x48 */
+template tmpl_sm(x,y) {
+    //[left_x,      upper_y,    width,     height,     offset_x,     offset_y]
+	[ x+180,	y+0,	32, 34,	-16,	-17]
+	[ x+213,	y+0,	48, 34,	-24,	-17]
+	[ x+262,	y+0,	48, 22, -24,    -11]
+	[ x+311,	y+0,	48, 34,	-24,	-17]
+	[ x+0,	    y+0,	32, 34,	-16,	-17]
+	[ x+33,	    y+0,	48, 34,	-24,	-17]
+	[ x+82,	    y+0,	48, 22, -24,    -11]
+	[ x+131,	y+0,	48, 34,	-24,	-17]
+}
+
+template tmpl_sm_purchase(x,y) {
+	[ x+82,	    y+0,	48, 22, -24,    -11]
+}
+
+// replace the rotor that appears when the aircraft type is a helecopter
+spriteset(no_rotor, "gfx/empty.png") {
+   [0, 0]
+}
+
+// change the color depending on the cargo type
+switch (FEAT_AIRCRAFT, SELF, sw_colour, cargo_classes) {
+    bitmask(CC_PASSENGERS): palette_2cc(company_colour1, company_colour2);
+    palette_2cc(company_colour2, company_colour1);
+}
+
+/* Aircraft template
+item(FEAT_AIRCRAFT, aircraft_id) {
+    property {
+        name: string(STR_aircraft_id_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(1968,01,01);
+        model_life: 30;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS); // no liquids
+        loading_speed: 20;
+        cost_factor: 50;
+        running_cost_factor: 50; // same as cost factor
+        cargo_age_period: 185; // 74 ticks = 1 day. default for aircraft is 2.5 days, or 185 ticks
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 650 km/h;
+        range: 450; // 0 for unlimited, 0..2894. This NewGRF uses RealRange/4
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 9; // This NewGRF uses RealRateOfClimb/2
+        passenger_capacity: 36;
+        mail_capacity: 9; // This NewGRF uses PassengerCapacity/4
+        sound_effect: SOUND_JET;
+    }
+
+    graphics {
+        purchase: ss_aircraft_id_purchase;
+        default: sw_aircraft_id;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_aircraft_id_DESC);
+    }
+}
+ */
+
+/* BEGIN Dornier Do.31 */
+
+// cargo version - horizontal flight
+spriteset(ss_dornier_do31_hor, "gfx/do31-hor.png") {
+    tmpl_lg(0,0)
+}
+// cargo version - vertical flight
+spriteset(ss_dornier_do31_ver, "gfx/do31-ver.png") {
+    tmpl_lg(0,0)
+}
+// passenger version - horizontal flight
+spriteset(ss_dornier_do31_pax_hor, "gfx/do31-pax-hor.png") {
+    tmpl_lg(0,0)
+}
+// passenger version - vertical flight
+spriteset(ss_dornier_do31_pax_ver, "gfx/do31-pax-ver.png") {
+    tmpl_lg(0,0)
+}
+// purchase window
+spriteset(ss_dornier_do31_purchase, "gfx/do31-pax-ver.png") {
+    tmpl_lg_purchase(0,0)
+}
+
+// select the vertical spriteset to use depending on the cargo
+switch (FEAT_AIRCRAFT, SELF, sw_dornier_do31_ver, cargo_classes) {
+    bitmask(CC_PASSENGERS): ss_dornier_do31_pax_ver;
+    ss_dornier_do31_ver;
+}
+
+// select the horizontal spriteset to use depending on the cargo
+switch (FEAT_AIRCRAFT, SELF, sw_dornier_do31_hor, cargo_classes) {
+    bitmask(CC_PASSENGERS): ss_dornier_do31_pax_hor;
+    ss_dornier_do31_hor;
+}
+
+// select the spriteset depending on the aircraft status
+switch (FEAT_AIRCRAFT, SELF, sw_dornier_do31_status, (var[0xE2, 0, 0xFF])) {
+    16..20: sw_dornier_do31_hor; // flight
+    23: sw_dornier_do31_ver; // helicopter taking off from airport
+    24: sw_dornier_do31_hor; // helicopter preparing to land at airport
+    25: sw_dornier_do31_ver; // helicopter landing at airport
+    26: sw_dornier_do31_ver; // helicopter taking off from heliport
+    27: sw_dornier_do31_hor; // helicopter preparing to land at heliport
+    28: sw_dornier_do31_ver; // helicopter landing at heliport
+        sw_dornier_do31_ver; // default
+}
+
+item(FEAT_AIRCRAFT, dornier_do31, 1) {
+    property {
+        name: string(STR_DORNIER_DO31_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(1968,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 20;
+        cost_factor: 50;
+        running_cost_factor: 50;
+        cargo_age_period: 185; //2.5 days
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 650 km/h;
+        range: 450; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 9;
+        passenger_capacity: 36;
+        mail_capacity: 9;
+        sound_effect: SOUND_JET;
+    }
+    graphics {
+        purchase: ss_dornier_do31_purchase;
+        default: sw_dornier_do31_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_DORNIER_DO31_DESC);
+    }
+}
+/* END Dornier Do 31 */
+
+/* BEGIN LTV C-142 and LTV Downtowner */
+
+spriteset(ss_ltv_c142_hor_1, "gfx/c-142/c142.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_ltv_c142_hor_2, "gfx/c-142/c142.png") {
+    tmpl_lg(0,49)
+}
+spriteset(ss_ltv_c142_hor_3, "gfx/c-142/c142.png") {
+    tmpl_lg(0,98)
+}
+spriteset(ss_ltv_c142_hor_4, "gfx/c-142/c142.png") {
+    tmpl_lg(0,147)
+}
+spriteset(ss_ltv_c142_ver_1, "gfx/c-142/c142.png") {
+    tmpl_lg(0,196)
+}
+spriteset(ss_ltv_c142_ver_2, "gfx/c-142/c142.png") {
+    tmpl_lg(0,245)
+}
+spriteset(ss_ltv_c142_ver_3, "gfx/c-142/c142.png") {
+    tmpl_lg(0,294)
+}
+spriteset(ss_ltv_c142_ver_4, "gfx/c-142/c142.png") {
+    tmpl_lg(0,343)
+}
+spriteset(ss_ltv_c142_purchase, "gfx/c-142/c142.png") {
+    tmpl_lg_purchase(0,196)
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_ltv_c142_hor_anim, (motion_counter % 16)) {
+    0..1:  ss_ltv_c142_hor_1;
+    2..3:  ss_ltv_c142_hor_2;
+    4..5:  ss_ltv_c142_hor_3;
+    6..7:  ss_ltv_c142_hor_4;
+    8..9:  ss_ltv_c142_hor_1;
+    10..11:  ss_ltv_c142_hor_2;
+    12..13:  ss_ltv_c142_hor_3;
+    14..15:  ss_ltv_c142_hor_4;
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_ltv_c142_ver_anim, (motion_counter % 16)) {
+    0..1:  ss_ltv_c142_ver_1;
+    2..3:  ss_ltv_c142_ver_2;
+    4..5:  ss_ltv_c142_ver_3;
+    6..7:  ss_ltv_c142_ver_4;
+    8..9:  ss_ltv_c142_ver_1;
+    10..11:  ss_ltv_c142_ver_2;
+    12..13:  ss_ltv_c142_ver_3;
+    14..15:  ss_ltv_c142_ver_4;
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_ltv_c142_status, (var[0xE2, 0, 0xFF])) {
+    16..20: sw_ltv_c142_hor_anim; // flight
+    23: sw_ltv_c142_ver_anim; // helicopter taking off from airport
+    24: sw_ltv_c142_hor_anim; // helicopter preparing to land at airport
+    25: sw_ltv_c142_ver_anim; // helicopter landing at airport
+    26: sw_ltv_c142_ver_anim; // helicopter taking off from heliport
+    27: sw_ltv_c142_hor_anim; // helicopter preparing to land at heliport
+    28: sw_ltv_c142_ver_anim; // helicopter landing at heliport
+        sw_ltv_c142_ver_anim; // default
+}
+
+item(FEAT_AIRCRAFT, ltv_c142, 2) {
+    property {
+        name: string(STR_LTV_C142_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(1965,07,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 20;
+        cost_factor: 30;
+        running_cost_factor: 30;
+        cargo_age_period: 185; // 2.5 days
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 463 km/h;
+        range: 1525; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 17;
+        passenger_capacity: 32;
+        mail_capacity: 8;
+        sound_effect: SOUND_HELICOPTER;
+    }
+    graphics {
+        purchase: ss_ltv_c142_purchase;
+        default: sw_ltv_c142_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_LTV_C142_DESC);
+    }
+}
+
+item(FEAT_AIRCRAFT, ltv_downtowner, 3) {
+    property {
+        name: string(STR_LTV_DOWNTOWNER_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(1970,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: bitmask(CC_PASSENGERS);
+//      non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 20;
+        cost_factor: 40;
+        running_cost_factor: 40;
+        cargo_age_period: 185; // 2.5 days
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 470 km/h;
+        range: 1525; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 17;
+        passenger_capacity: 50;
+        mail_capacity: 12;
+        sound_effect: SOUND_HELICOPTER;
+    }
+    graphics {
+        purchase: ss_ltv_c142_purchase;
+        default: sw_ltv_c142_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_LTV_DOWNTOWNER_DESC);
+    }
+}
+
+/* END LTV C-142 and LTV Downtowner */
+
+/* BEGIN Canadair CL-84 */
+// CL-84
+spriteset(ss_canadair_cl84_hor_1, "gfx/cl-84/cl84-hor-1.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_canadair_cl84_hor_2, "gfx/cl-84/cl84-hor-2.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_canadair_cl84_hor_3, "gfx/cl-84/cl84-hor-3.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_canadair_cl84_hor_4, "gfx/cl-84/cl84-hor-4.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_canadair_cl84_ver_1, "gfx/cl-84/cl84-ver-1.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_canadair_cl84_ver_2, "gfx/cl-84/cl84-ver-2.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_canadair_cl84_ver_3, "gfx/cl-84/cl84-ver-3.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_canadair_cl84_ver_4, "gfx/cl-84/cl84-ver-4.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_canadair_cl84_purchase, "gfx/cl-84/cl84-ver-1.png") {
+    tmpl_med_purchase(0,0)
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_canadair_cl84_hor_anim, (motion_counter % 16)) {
+    0..1:  ss_canadair_cl84_hor_1;
+    2..3:  ss_canadair_cl84_hor_2;
+    4..5:  ss_canadair_cl84_hor_3;
+    6..7:  ss_canadair_cl84_hor_4;
+    8..9:  ss_canadair_cl84_hor_1;
+    10..11:  ss_canadair_cl84_hor_2;
+    12..13:  ss_canadair_cl84_hor_3;
+    14..15:  ss_canadair_cl84_hor_4;
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_canadair_cl84_ver_anim, (motion_counter % 16)) {
+    0..1:  ss_canadair_cl84_ver_1;
+    2..3:  ss_canadair_cl84_ver_2;
+    4..5:  ss_canadair_cl84_ver_3;
+    6..7:  ss_canadair_cl84_ver_4;
+    8..9:  ss_canadair_cl84_ver_1;
+    10..11:  ss_canadair_cl84_ver_2;
+    12..13:  ss_canadair_cl84_ver_3;
+    14..15:  ss_canadair_cl84_ver_4;
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_canadair_cl84_status, (var[0xE2, 0, 0xFF])) {
+    16..20: sw_canadair_cl84_hor_anim; // flight
+    23: sw_canadair_cl84_ver_anim; // helicopter taking off from airport
+    24: sw_canadair_cl84_hor_anim; // helicopter preparing to land at airport
+    25: sw_canadair_cl84_ver_anim; // helicopter landing at airport
+    26: sw_canadair_cl84_ver_anim; // helicopter taking off from heliport
+    27: sw_canadair_cl84_hor_anim; // helicopter preparing to land at heliport
+    28: sw_canadair_cl84_ver_anim; // helicopter landing at heliport
+        sw_canadair_cl84_ver_anim; // default
+}
+
+item(FEAT_AIRCRAFT, canadair_cl84, 4) {
+    property {
+        name: string(STR_CANADAIR_CL84_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(1965,07,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 20;
+        cost_factor: 20;
+        running_cost_factor: 20;
+        cargo_age_period: 185; // 2.5 days
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 484 km/h;
+        range: 170; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 10;
+        passenger_capacity: 12;
+        mail_capacity: 3;
+        sound_effect: SOUND_HELICOPTER;
+    }
+    graphics {
+        purchase: ss_canadair_cl84_purchase;
+        default: sw_canadair_cl84_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_CANADAIR_CL84_DESC);
+    }
+}
+/* END Canadair CL-84 */
+
+
+/* BEGIN Bell Boeing V-22 Osprey */
+
+spriteset(ss_bell_boeing_v22_osprey_hor_1, "gfx/v-22/v22-hor-1.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_hor_2, "gfx/v-22/v22-hor-2.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_hor_3, "gfx/v-22/v22-hor-3.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_hor_4, "gfx/v-22/v22-hor-4.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_ver_1, "gfx/v-22/v22-ver-1.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_ver_2, "gfx/v-22/v22-ver-2.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_ver_3, "gfx/v-22/v22-ver-3.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_ver_4, "gfx/v-22/v22-ver-4.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_hangar, "gfx/v-22/v22-hangar.png") {
+    tmpl_med(0,0)
+}
+spriteset(ss_bell_boeing_v22_osprey_purchase, "gfx/v-22/v22-ver-1.png") {
+    tmpl_med_purchase(0,0)
+}
+
+
+switch (FEAT_AIRCRAFT, SELF, sw_bell_boeing_v22_osprey_hor_anim, (motion_counter % 16)) {
+    0..1:  ss_bell_boeing_v22_osprey_hor_1;
+    2..3:  ss_bell_boeing_v22_osprey_hor_2;
+    4..5:  ss_bell_boeing_v22_osprey_hor_3;
+    6..7:  ss_bell_boeing_v22_osprey_hor_4;
+    8..9:  ss_bell_boeing_v22_osprey_hor_1;
+    10..11:  ss_bell_boeing_v22_osprey_hor_2;
+    12..13:  ss_bell_boeing_v22_osprey_hor_3;
+    14..15:  ss_bell_boeing_v22_osprey_hor_4;
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_bell_boeing_v22_osprey_ver_anim, (motion_counter % 16)) {
+    0..1:  ss_bell_boeing_v22_osprey_ver_1;
+    2..3:  ss_bell_boeing_v22_osprey_ver_2;
+    4..5:  ss_bell_boeing_v22_osprey_ver_3;
+    6..7:  ss_bell_boeing_v22_osprey_ver_4;
+    8..9:  ss_bell_boeing_v22_osprey_ver_1;
+    10..11:  ss_bell_boeing_v22_osprey_ver_2;
+    12..13:  ss_bell_boeing_v22_osprey_ver_3;
+    14..15:  ss_bell_boeing_v22_osprey_ver_4;
+}
+
+
+switch (FEAT_AIRCRAFT, SELF, sw_bell_boeing_v22_osprey_status, (var[0xE2, 0, 0xFF])) {
+    00..01: ss_bell_boeing_v22_osprey_hangar; // entering hangar and going to hangar entrance
+    16..20: sw_bell_boeing_v22_osprey_hor_anim; // flight
+    23: sw_bell_boeing_v22_osprey_ver_anim; // helicopter taking off from airport
+    24: sw_bell_boeing_v22_osprey_hor_anim; // helicopter preparing to land at airport
+    25: sw_bell_boeing_v22_osprey_ver_anim; // helicopter landing at airport
+    26: sw_bell_boeing_v22_osprey_ver_anim; // helicopter taking off from heliport
+    27: sw_bell_boeing_v22_osprey_hor_anim; // helicopter preparing to land at heliport
+    28: sw_bell_boeing_v22_osprey_ver_anim; // helicopter landing at heliport
+        sw_bell_boeing_v22_osprey_ver_anim; // default
+}
+
+item(FEAT_AIRCRAFT, bell_boeing_v22_osprey, 5) {
+    property {
+        name: string(STR_BELL_BOEING_V22_OSPREY_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2005,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 20;
+        cost_factor: 50;
+        running_cost_factor: 50;
+        cargo_age_period: 185; // 2.5 days
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 445 km/h;
+        range: 557; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 5;
+        passenger_capacity: 32;
+        mail_capacity: 8;
+        sound_effect: SOUND_HELICOPTER;
+    }
+
+    /* Define graphics for various cargo types, as well as the capacity callback */
+    graphics {
+        purchase: ss_bell_boeing_v22_osprey_purchase;
+        default: sw_bell_boeing_v22_osprey_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_BELL_BOEING_V22_OSPREY_DESC);
+    }
+}
+/* END Bell Boeing V-22 Osprey */
+
+/* BEGIN Karem Aerotrain */
+spriteset(ss_karem_aerotrain_hor_1, "gfx/karem-aerotrain/karem-aerotrain-hor-1.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_karem_aerotrain_hor_2, "gfx/karem-aerotrain/karem-aerotrain-hor-2.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_karem_aerotrain_hor_3, "gfx/karem-aerotrain/karem-aerotrain-hor-3.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_karem_aerotrain_hor_4, "gfx/karem-aerotrain/karem-aerotrain-hor-4.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_karem_aerotrain_ver_1, "gfx/karem-aerotrain/karem-aerotrain-ver-1.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_karem_aerotrain_ver_2, "gfx/karem-aerotrain/karem-aerotrain-ver-2.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_karem_aerotrain_ver_3, "gfx/karem-aerotrain/karem-aerotrain-ver-3.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_karem_aerotrain_ver_4, "gfx/karem-aerotrain/karem-aerotrain-ver-4.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_karem_aerotrain_purchase, "gfx/karem-aerotrain/karem-aerotrain-ver-1.png") {
+    tmpl_lg_purchase(0,0)
+}
+
+switch (FEAT_AIRCRAFT, SELF, s2_karem_aerotrain_hor_anim, (motion_counter % 16)) {
+    0..1:  ss_karem_aerotrain_hor_1;
+    2..3:  ss_karem_aerotrain_hor_2;
+    4..5:  ss_karem_aerotrain_hor_3;
+    6..7:  ss_karem_aerotrain_hor_4;
+    8..9:  ss_karem_aerotrain_hor_1;
+    10..11:  ss_karem_aerotrain_hor_2;
+    12..13:  ss_karem_aerotrain_hor_3;
+    14..15:  ss_karem_aerotrain_hor_4;
+}
+
+switch (FEAT_AIRCRAFT, SELF, s2_karem_aerotrain_ver_anim, (motion_counter % 16)) {
+    0..1:  ss_karem_aerotrain_ver_1;
+    2..3:  ss_karem_aerotrain_ver_2;
+    4..5:  ss_karem_aerotrain_ver_3;
+    6..7:  ss_karem_aerotrain_ver_4;
+    8..9:  ss_karem_aerotrain_ver_1;
+    10..11:  ss_karem_aerotrain_ver_2;
+    12..13:  ss_karem_aerotrain_ver_3;
+    14..15:  ss_karem_aerotrain_ver_4;
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_karem_aerotrain_status, (var[0xE2, 0, 0xFF])) {
+    16..20: s2_karem_aerotrain_hor_anim; // flight
+    23: s2_karem_aerotrain_ver_anim; // helicopter taking off from airport
+    24: s2_karem_aerotrain_hor_anim; // helicopter preparing to land at airport
+    25: s2_karem_aerotrain_ver_anim; // helicopter landing at airport
+    26: s2_karem_aerotrain_ver_anim; // helicopter taking off from heliport
+    27: s2_karem_aerotrain_hor_anim; // helicopter preparing to land at heliport
+    28: s2_karem_aerotrain_ver_anim; // helicopter landing at heliport
+        s2_karem_aerotrain_ver_anim; // default
+}
+
+item(FEAT_AIRCRAFT, karem_aerotrain, 6) {
+    property {
+        name: string(STR_KAREM_AEROTRAIN_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2020,07,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 20;
+        cost_factor: 50;
+        running_cost_factor: 50;
+        cargo_age_period: 185; // 2.5 days
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 611 km/h;
+        range: 1412; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 9;
+        passenger_capacity: 120;
+        mail_capacity: 30;
+        sound_effect: SOUND_JET;
+    }
+    graphics {
+        purchase: ss_karem_aerotrain_purchase;
+        default: sw_karem_aerotrain_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_KAREM_AEROTRAIN_DESC);
+    }
+}
+/* END Karem Aerotrain */
+
+/* END Real Aircraft */
+
+/* BEGIN Fictional Aircraft */
+
+/* BEGIN Fanwing */
+
+spriteset(ss_fanwing_ver, "gfx/fanwing-ver.png") {
+    tmpl_sm(0,0)
+}
+spriteset(ss_fanwing_hor, "gfx/fanwing-hor.png") {
+    tmpl_sm(0,0)
+}
+spriteset(ss_fanwing_purchase, "gfx/fanwing-ver.png") {
+    tmpl_sm_purchase(0,0)
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_fanwing_status, (var[0xE2, 0, 0xFF])) {
+    16..20: ss_fanwing_hor; // flight
+    23: ss_fanwing_ver; // helicopter taking off from airport
+    24: ss_fanwing_hor; // helicopter preparing to land at airport
+    25: ss_fanwing_ver; // helicopter landing at airport
+    26: ss_fanwing_ver; // helicopter taking off from heliport
+    27: ss_fanwing_hor; // helicopter preparing to land at heliport
+    28: ss_fanwing_ver; // helicopter landing at heliport
+        ss_fanwing_ver; // default
+}
+
+item(FEAT_AIRCRAFT, fanwing, 30) {
+    property {
+        /* Properties common to all vehicle types */
+        name: string(STR_FANWING_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2025,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 10;
+        cost_factor: 100;
+        running_cost_factor: 100;
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 800 km/h;
+        range: 1024; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 12;
+        passenger_capacity: 125;
+        mail_capacity: 31;
+        sound_effect: SOUND_HELICOPTER;
+    }
+    graphics {
+        purchase: ss_fanwing_purchase;
+        default: sw_fanwing_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_FANWING_DESC);
+    }
+}
+/* END Fanwing */
+
+/* BEGIN Ducted Fan Mk 1 */
+
+spriteset(ss_ducted_fan_mk1, "gfx/ac-duct-mk1.png") {
+    tmpl_sm(0,0)
+}
+
+spriteset(ss_ducted_fan_mk1_purchase, "gfx/ac-duct-mk1.png") {
+    tmpl_sm_purchase(0,0)
+}
+
+item(FEAT_AIRCRAFT, ducted_fan_mk1, 31) {
+    property {
+        /* Properties common to all vehicle types */
+        name: string(STR_DUCTED_FAN_MK1_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2020,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 0;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 10;
+        cost_factor: 40;
+        running_cost_factor: 40;
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 650 km/h;
+        range: 512; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 12;
+        passenger_capacity: 75;
+        mail_capacity: 18;
+        sound_effect: SOUND_HELICOPTER;
+    }
+
+    /* Define graphics for various cargo types, as well as the capacity callback */
+    graphics {
+        purchase: ss_ducted_fan_mk1_purchase;
+        default: ss_ducted_fan_mk1;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_DUCTED_FAN_MK1_DESC);
+
+    }
+}
+
+/* END Ducted Fan Mk 1 */
+
+/* BEGIN Ducted Fan Mk 2 */
+
+spriteset(ss_ducted_fan_mk2, "gfx/ac-duct-mk2.png") {
+    tmpl_sm(0,0)
+}
+
+spriteset(ss_ducted_fan_mk2_purchase, "gfx/ac-duct-mk2.png") {
+    tmpl_sm_purchase(0,0)
+}
+
+item(FEAT_AIRCRAFT, ducted_fan_mk2, 32) {
+    property {
+        /* Properties common to all vehicle types */
+        name: string(STR_DUCTED_FAN_MK2_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2030,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 0;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 10;
+        cost_factor: 50;
+        running_cost_factor: 50;
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 650 km/h;
+        range: 1024; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 14;
+        passenger_capacity: 100;
+        mail_capacity: 25;
+        sound_effect: SOUND_HELICOPTER;
+    }
+
+    /* Define graphics for various cargo types, as well as the capacity callback */
+    graphics {
+        purchase: ss_ducted_fan_mk2_purchase;
+        default: ss_ducted_fan_mk2;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_DUCTED_FAN_MK2_DESC);
+
+    }
+}
+
+/* END Ducted Fan Mk 2 */
+
+/* BEGIN Skyrambler */
+
+spriteset(ss_skyrambler, "gfx/ac-skyrambler.png") {
+    tmpl_sm(0,0)
+}
+
+spriteset(ss_skyrambler_purchase, "gfx/ac-skyrambler.png") {
+    tmpl_sm_purchase(0,0)
+}
+
+item(FEAT_AIRCRAFT, skyrambler, 33) {
+    property {
+        name: string(STR_SKYRAMBLER_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2035,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 0;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 10;
+        cost_factor: 60;
+        running_cost_factor: 60;
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 1024 km/h;
+        range: 2048; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 14;
+        passenger_capacity: 25;
+        mail_capacity: 6;
+        sound_effect: SOUND_JET;
+    }
+
+    /* Define graphics for various cargo types, as well as the capacity callback */
+    graphics {
+        purchase: ss_skyrambler_purchase;
+        default: ss_skyrambler;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_SKYRAMBLER_DESC);
+
+    }
+}
+
+/* END Skyrambler */
+
+/* BEGIN Scramjet */
+
+spriteset(ss_scramjet_hor, "gfx/scramjet-hor.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_scramjet_ver, "gfx/scramjet-ver.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_scramjet_purchase, "gfx/scramjet-ver.png") {
+    tmpl_lg_purchase(0,0)
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_scramjet_status, (var[0xE2, 0, 0xFF])) {
+    16..20: ss_scramjet_hor; // flight
+    23: ss_scramjet_ver; // helicopter taking off from airport
+    24: ss_scramjet_hor; // helicopter preparing to land at airport
+    25: ss_scramjet_ver; // helicopter landing at airport
+    26: ss_scramjet_ver; // helicopter taking off from heliport
+    27: ss_scramjet_hor; // helicopter preparing to land at heliport
+    28: ss_scramjet_ver; // helicopter landing at heliport
+        ss_scramjet_ver; // default
+}
+
+item(FEAT_AIRCRAFT, scramjet, 34) {
+    property {
+        name: string(STR_SCRAMJET_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2050,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 0;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 10;
+        cost_factor: 80;
+        running_cost_factor: 80;
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 3280 km/h;
+        range: 4096; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 14;
+        passenger_capacity: 75;
+        mail_capacity: 23;
+        sound_effect: SOUND_JET;
+    }
+
+    /* Define graphics for various cargo types, as well as the capacity callback */
+    graphics {
+        purchase: ss_scramjet_purchase;
+        default: sw_scramjet_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_SCRAMJET_DESC);
+
+    }
+}
+
+/* END Scramjet */
+
+/* BEGIN Tiltjet */
+
+
+spriteset(ss_tiltjet_ver, "gfx/tiltjet-ver.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_tiltjet_hor, "gfx/tiltjet-hor.png") {
+    tmpl_lg(0,0)
+}
+spriteset(ss_tiltjet_purchase, "gfx/tiltjet-ver.png") {
+    tmpl_lg_purchase(0,0)
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_tiltjet_status, (var[0xE2, 0, 0xFF])) {
+    16..20: ss_tiltjet_hor; // flight
+    23: ss_tiltjet_ver; // helicopter taking off from airport
+    24: ss_tiltjet_hor; // helicopter preparing to land at airport
+    25: ss_tiltjet_ver; // helicopter landing at airport
+    26: ss_tiltjet_ver; // helicopter taking off from heliport
+    27: ss_tiltjet_hor; // helicopter preparing to land at heliport
+    28: ss_tiltjet_ver; // helicopter landing at heliport
+        ss_tiltjet_ver; // default
+}
+
+item(FEAT_AIRCRAFT, tiltjet, 35) {
+    property {
+        /* Properties common to all vehicle types */
+        name: string(STR_TILTJET_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2025,01,01);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
+        loading_speed: 10;
+        cost_factor: 100;
+        running_cost_factor: 100;
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 870 km/h;
+        range: 1024; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 12;
+        passenger_capacity: 125;
+        mail_capacity: 31;
+        sound_effect: SOUND_JET;
+    }
+    graphics {
+        purchase: ss_tiltjet_purchase;
+        default: sw_tiltjet_status;
+        rotor: no_rotor;
+        colour_mapping: sw_colour;
+        additional_text: string(STR_TILTJET_DESC);
+    }
+}
+/* END Fanwing */
+
+/* END Fictional Aircraft */
+
+sort(FEAT_AIRCRAFT,[canadair_cl84, ltv_c142, dornier_do31, ltv_downtowner, bell_boeing_v22_osprey, ducted_fan_mk1, karem_aerotrain, ducted_fan_mk2, tiltjet, fanwing, skyrambler, scramjet]);
+
+if (param[1] == 2) {
+    disable_item(FEAT_AIRCRAFT, 1,6);
+}
+if (param[1] == 1) {
+    disable_item(FEAT_AIRCRAFT, 30,35);
+}

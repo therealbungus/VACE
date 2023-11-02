@@ -1,0 +1,50 @@
+﻿##grflangid 0x01
+STR_GRF_NAME	:{TITLE} - {VERSION}
+STR_GRF_DESC	:{GOLD}VTOL - Vertical Take-Off and Landing. {SILVER}Aircraft that go straight up and down, no runway needed! Kind of like a helicopter, but faster and with better range. This is a mix of real and fictional aircraft. Real aircraft include those in production, those that were tested but never went into production, and those that are on the drawing boards. Fictional aircraft include some based around real world technologies and some that are a bit more fanciful.{}Graphics and code by {WHITE}Oftcrash{SILVER}. Real World aircraft research by {WHITE}Kamnet{SILVER}. Sprites created using Zephyris' PixelTool{}{COPYRIGHT}{COPYRIGHTDT} {AUTHOR}{}License: GPL v2{}Updated:{UPDATEDT}
+STR_GRF_URL		:https://www.tt-forums.net/viewtopic.php?f=26&t=74880
+
+# Parameters
+STR_PARAM_RVF_NAME		:Fiction or reality
+STR_PARAM_RVF_DESC		:Include real planned aircraft, fictional aircraft, or both.
+STR_PARAM_RVF_OPT_0		:Both real (and planned) and fictional aircraft
+STR_PARAM_RVF_OPT_1		:Real aircraft only
+STR_PARAM_RVF_OPT_2		:Fictional aircraft only
+
+# Real Aircraft
+STR_BELL_BOEING_V22_OSPREY_NAME		:Bell Boeing V-22 Osprey
+STR_BELL_BOEING_V22_OSPREY_DESC		:{BLACK}Aircraft Type: {GOLD}Tiltrotor VTOL{}{BLACK}Airport Type: {GOLD}Any 
+
+STR_LTV_C142_NAME					:LTV C-142
+STR_LTV_C142_DESC					:{BLACK}Aircraft Type: {GOLD}Tiltwing VTOL{}{BLACK}Airport Type: {GOLD}Any 
+
+STR_LTV_DOWNTOWNER_NAME				:LTV Downtowner
+STR_LTV_DOWNTOWNER_DESC				:{BLACK}Aircraft Type: {GOLD}Tiltwing VTOL{}{BLACK}Airport Type: {GOLD}Any 
+
+STR_CANADAIR_CL84_NAME				:Canadair CL-84
+STR_CANADAIR_CL84_DESC				:{BLACK}Aircraft Type: {GOLD}Tiltwing VTOL{}{BLACK}Airport Type: {GOLD}Any
+
+STR_DORNIER_DO31_NAME				:Dornier Do 31
+STR_DORNIER_DO31_DESC				:{BLACK}Aircraft Type: {GOLD}Vectored Thrust VTOL{}{BLACK}Airport Type: {GOLD}Any
+
+STR_KAREM_AEROTRAIN_NAME			:Karem Aerotrain
+STR_KAREM_AEROTRAIN_DESC			:{BLACK}Aircraft Type: {GOLD}Vectored Tiltrotor VTOL{}{BLACK}Airport Type: {GOLD}Any
+
+# Fictional Aircraft
+
+STR_FANWING_NAME					:Ariel FW-1 Fanwing
+STR_FANWING_DESC					:{BLACK}Aircraft Type: {GOLD}Tiltfan VTOL{}{BLACK}Airport Type: {GOLD}Any
+
+STR_DUCTED_FAN_MK1_NAME				:Foster DF-20
+STR_DUCTED_FAN_MK1_DESC				:{BLACK}Aircraft Type: {GOLD}Ducted Fan VTOL{}{BLACK}Airport Type: {GOLD}Any
+
+STR_DUCTED_FAN_MK2_NAME				:Foster DF-30
+STR_DUCTED_FAN_MK2_DESC				:{BLACK}Aircraft Type: {GOLD}Ducted Fan VTOL{}{BLACK}Airport Type: {GOLD}Any
+
+STR_TILTJET_NAME					:KAW Skyrunner
+STR_TILTJET_DESC					:{BLACK}Aircraft Type: {GOLD}Tiltjet VTOL{}{BLACK}Airport Type: {GOLD}Any
+
+STR_SCRAMJET_NAME					:Orbitas S-1
+STR_SCRAMJET_DESC					:{BLACK}Aircraft Type: {GOLD}Vector Thrust Scramjet VTOL{}{BLACK}Airport Type: {GOLD}Any
+
+STR_SKYRAMBLER_NAME					:KAW Skyrambler
+STR_SKYRAMBLER_DESC					:{BLACK}Aircraft Type: {GOLD}Vector Thrust VTOL{}{BLACK}Airport Type: {GOLD}Any
