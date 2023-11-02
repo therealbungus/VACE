@@ -1,10 +1,10 @@
 grf {
-    grfid: "KK\11\01";
+    grfid: "BN\01\03";                  // todo: add livery, range toggle, better cost values
     name: string(STR_GRF_NAME);
     desc: string(STR_GRF_DESC);
     url: string(STR_GRF_URL);
-    version: 4;
-    min_compatible_version: 4;
+    version: 1;
+    min_compatible_version: 1;
     param 1 {
         // real vs fiction
     	rvf {
@@ -21,13 +21,22 @@ grf {
     		};
     	}
     }
+    param 2 {
+        // ornithopter toggle
+    	orni_toggle {
+    		type: bool;
+    		name: string(STR_PARAM_ORNI_NAME);
+    		desc: string(STR_PARAM_ORNI_DESC);
+    		def_value: 0;
+    	}
+    }
 }
 
 // see explanation here: https://newgrf-specs.tt-wiki.net/wiki/NML:Setting_base_costs
 basecost {
  	PR_BUILD_VEHICLE_AIRCRAFT: 1; 
- 	PR_RUNNING_AIRCRAFT: 3;
- }
+ 	PR_RUNNING_AIRCRAFT: 2;
+}
 
 /* 64x16x64 */
 template tmpl_lg(x,y) {
@@ -44,7 +53,6 @@ template tmpl_lg(x,y) {
 template tmpl_lg_purchase(x,y) {
 	[ x+108,	y+0,	64, 32, -32,    -16]
 }
-
 
 /* 48x16x48 */
 template tmpl_med(x,y) {
@@ -78,6 +86,23 @@ template tmpl_sm(x,y) {
 
 template tmpl_sm_purchase(x,y) {
 	[ x+82,	    y+0,	48, 22, -24,    -11]
+}
+
+/* 48x16x48 */
+template tmpl_ac_sm(x,y) {
+    //[left_x,      upper_y,    width,     height,     offset_x,     offset_y]
+	[ x+121,	0+y,	21, 32,	-11,	-16]
+	[ x+143,	0+y,	32, 32,	-16,	-16]
+	[ x+176,	0+y,	32, 24, -16,    -12]
+	[ x+209,	0+y,	32, 32,	-16,	-16]
+	[ x+0,	    0+y,	21, 32,	-11,	-16]
+	[ x+22,	    0+y,	32, 32,	-16,	-16]
+	[ x+55,	    0+y,	32, 24, -16,    -12]
+	[ x+88,	    0+y,	32, 32,	-16,	-16]
+}
+
+template tmpl_ac_sm_purchase(x,y) {
+	[ x+55,	    0+y,	32, 24, -16,    -12]
 }
 
 // replace the rotor that appears when the aircraft type is a helecopter
@@ -115,7 +140,7 @@ item(FEAT_AIRCRAFT, aircraft_id) {
         acceleration: 9; // This NewGRF uses RealRateOfClimb/2
         passenger_capacity: 36;
         mail_capacity: 9; // This NewGRF uses PassengerCapacity/4
-        sound_effect: SOUND_JET;
+        sound_effect: SOUND_TAKEOFF_JET;
     }
 
     graphics {
@@ -186,8 +211,8 @@ item(FEAT_AIRCRAFT, dornier_do31, 1) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 50;
-        running_cost_factor: 50;
+        cost_factor: 40;
+        running_cost_factor: 40;
         cargo_age_period: 185; //2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 650 km/h;
@@ -198,7 +223,7 @@ item(FEAT_AIRCRAFT, dornier_do31, 1) {
         acceleration: 9;
         passenger_capacity: 36;
         mail_capacity: 9;
-        sound_effect: SOUND_JET;
+        sound_effect: SOUND_TAKEOFF_JET;
     }
     graphics {
         purchase: ss_dornier_do31_purchase;
@@ -284,8 +309,8 @@ item(FEAT_AIRCRAFT, ltv_c142, 2) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 30;
-        running_cost_factor: 30;
+        cost_factor: 20;
+        running_cost_factor: 20;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 463 km/h;
@@ -296,7 +321,7 @@ item(FEAT_AIRCRAFT, ltv_c142, 2) {
         acceleration: 17;
         passenger_capacity: 32;
         mail_capacity: 8;
-        sound_effect: SOUND_HELICOPTER;
+        sound_effect: SOUND_TAKEOFF_HELICOPTER;
     }
     graphics {
         purchase: ss_ltv_c142_purchase;
@@ -318,8 +343,8 @@ item(FEAT_AIRCRAFT, ltv_downtowner, 3) {
         refittable_cargo_classes: bitmask(CC_PASSENGERS);
 //      non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 40;
-        running_cost_factor: 40;
+        cost_factor: 30;
+        running_cost_factor: 30;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 470 km/h;
@@ -330,7 +355,7 @@ item(FEAT_AIRCRAFT, ltv_downtowner, 3) {
         acceleration: 17;
         passenger_capacity: 50;
         mail_capacity: 12;
-        sound_effect: SOUND_HELICOPTER;
+        sound_effect: SOUND_TAKEOFF_HELICOPTER;
     }
     graphics {
         purchase: ss_ltv_c142_purchase;
@@ -417,8 +442,8 @@ item(FEAT_AIRCRAFT, canadair_cl84, 4) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 20;
-        running_cost_factor: 20;
+        cost_factor: 10;
+        running_cost_factor: 10;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 484 km/h;
@@ -429,7 +454,7 @@ item(FEAT_AIRCRAFT, canadair_cl84, 4) {
         acceleration: 10;
         passenger_capacity: 12;
         mail_capacity: 3;
-        sound_effect: SOUND_HELICOPTER;
+        sound_effect: SOUND_TAKEOFF_HELICOPTER;
     }
     graphics {
         purchase: ss_canadair_cl84_purchase;
@@ -522,8 +547,8 @@ item(FEAT_AIRCRAFT, bell_boeing_v22_osprey, 5) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 50;
-        running_cost_factor: 50;
+        cost_factor: 40;
+        running_cost_factor: 40;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 445 km/h;
@@ -534,7 +559,7 @@ item(FEAT_AIRCRAFT, bell_boeing_v22_osprey, 5) {
         acceleration: 5;
         passenger_capacity: 32;
         mail_capacity: 8;
-        sound_effect: SOUND_HELICOPTER;
+        sound_effect: SOUND_TAKEOFF_HELICOPTER;
     }
 
     /* Define graphics for various cargo types, as well as the capacity callback */
@@ -621,8 +646,8 @@ item(FEAT_AIRCRAFT, karem_aerotrain, 6) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 50;
-        running_cost_factor: 50;
+        cost_factor: 40;
+        running_cost_factor: 40;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 611 km/h;
@@ -633,7 +658,7 @@ item(FEAT_AIRCRAFT, karem_aerotrain, 6) {
         acceleration: 9;
         passenger_capacity: 120;
         mail_capacity: 30;
-        sound_effect: SOUND_JET;
+        sound_effect: SOUND_TAKEOFF_JET;
     }
     graphics {
         purchase: ss_karem_aerotrain_purchase;
@@ -684,8 +709,8 @@ item(FEAT_AIRCRAFT, fanwing, 30) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 100;
-        running_cost_factor: 100;
+        cost_factor: 90;
+        running_cost_factor: 90;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 800 km/h;
         range: 1024; // 0 for unlimited, 0..2894
@@ -695,7 +720,7 @@ item(FEAT_AIRCRAFT, fanwing, 30) {
         acceleration: 12;
         passenger_capacity: 125;
         mail_capacity: 31;
-        sound_effect: SOUND_HELICOPTER;
+        sound_effect: SOUND_TAKEOFF_HELICOPTER;
     }
     graphics {
         purchase: ss_fanwing_purchase;
@@ -729,8 +754,8 @@ item(FEAT_AIRCRAFT, ducted_fan_mk1, 31) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 40;
-        running_cost_factor: 40;
+        cost_factor: 30;
+        running_cost_factor: 30;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 650 km/h;
         range: 512; // 0 for unlimited, 0..2894
@@ -740,7 +765,7 @@ item(FEAT_AIRCRAFT, ducted_fan_mk1, 31) {
         acceleration: 12;
         passenger_capacity: 75;
         mail_capacity: 18;
-        sound_effect: SOUND_HELICOPTER;
+        sound_effect: SOUND_TAKEOFF_HELICOPTER;
     }
 
     /* Define graphics for various cargo types, as well as the capacity callback */
@@ -778,8 +803,8 @@ item(FEAT_AIRCRAFT, ducted_fan_mk2, 32) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 50;
-        running_cost_factor: 50;
+        cost_factor: 40;
+        running_cost_factor: 40;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 650 km/h;
         range: 1024; // 0 for unlimited, 0..2894
@@ -789,7 +814,7 @@ item(FEAT_AIRCRAFT, ducted_fan_mk2, 32) {
         acceleration: 14;
         passenger_capacity: 100;
         mail_capacity: 25;
-        sound_effect: SOUND_HELICOPTER;
+        sound_effect: SOUND_TAKEOFF_HELICOPTER;
     }
 
     /* Define graphics for various cargo types, as well as the capacity callback */
@@ -826,8 +851,8 @@ item(FEAT_AIRCRAFT, skyrambler, 33) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 60;
-        running_cost_factor: 60;
+        cost_factor: 50;
+        running_cost_factor: 50;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 1024 km/h;
         range: 2048; // 0 for unlimited, 0..2894
@@ -837,7 +862,7 @@ item(FEAT_AIRCRAFT, skyrambler, 33) {
         acceleration: 14;
         passenger_capacity: 25;
         mail_capacity: 6;
-        sound_effect: SOUND_JET;
+        sound_effect: SOUND_TAKEOFF_JET;
     }
 
     /* Define graphics for various cargo types, as well as the capacity callback */
@@ -887,8 +912,8 @@ item(FEAT_AIRCRAFT, scramjet, 34) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 80;
-        running_cost_factor: 80;
+        cost_factor: 70;
+        running_cost_factor: 70;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 3280 km/h;
         range: 4096; // 0 for unlimited, 0..2894
@@ -898,7 +923,7 @@ item(FEAT_AIRCRAFT, scramjet, 34) {
         acceleration: 14;
         passenger_capacity: 75;
         mail_capacity: 23;
-        sound_effect: SOUND_JET;
+        sound_effect: SOUND_TAKEOFF_JET;
     }
 
     /* Define graphics for various cargo types, as well as the capacity callback */
@@ -950,8 +975,8 @@ item(FEAT_AIRCRAFT, tiltjet, 35) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 100;
-        running_cost_factor: 100;
+        cost_factor: 90;
+        running_cost_factor: 90;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 870 km/h;
         range: 1024; // 0 for unlimited, 0..2894
@@ -961,7 +986,7 @@ item(FEAT_AIRCRAFT, tiltjet, 35) {
         acceleration: 12;
         passenger_capacity: 125;
         mail_capacity: 31;
-        sound_effect: SOUND_JET;
+        sound_effect: SOUND_TAKEOFF_JET;
     }
     graphics {
         purchase: ss_tiltjet_purchase;
@@ -975,11 +1000,91 @@ item(FEAT_AIRCRAFT, tiltjet, 35) {
 
 /* END Fictional Aircraft */
 
-sort(FEAT_AIRCRAFT,[canadair_cl84, ltv_c142, dornier_do31, ltv_downtowner, bell_boeing_v22_osprey, ducted_fan_mk1, karem_aerotrain, ducted_fan_mk2, tiltjet, fanwing, skyrambler, scramjet]);
+
+/* ADD Ornithopter */
+
+spriteset(ss_ornithopter1, "gfx/ornithopter/ornithopter1.png") {
+    tmpl_ac_sm(0,0)
+}
+spriteset(ss_ornithopter2, "gfx/ornithopter/ornithopter2.png") {
+    tmpl_ac_sm(0,0)
+}
+spriteset(ss_ornithopter3, "gfx/ornithopter/ornithopter3.png") {
+    tmpl_ac_sm(0,0)
+}
+
+spriteset(ss_ac_purchase, "gfx/ornithopter/ornithopter3.png") {
+    tmpl_ac_sm_purchase(0,0)
+}
+
+switch (FEAT_AIRCRAFT, SELF, sw_ornithopter_anim, (motion_counter % 16)) {
+    0..1:  ss_ornithopter1;
+    2..3:  ss_ornithopter2;
+    4..5:  ss_ornithopter1;
+    6..7:  ss_ornithopter3;
+    8..9:  ss_ornithopter1;
+    10..11:  ss_ornithopter2;
+    12..13:  ss_ornithopter1;
+    14..15:  ss_ornithopter3;
+}
+
+
+// change the color depending on the cargo type
+switch (FEAT_AIRCRAFT, SELF, sw_ac_colour, cargo_classes) {
+    bitmask(CC_PASSENGERS): palette_2cc(company_colour1, company_colour2);
+    palette_2cc(company_colour2, company_colour1);
+}
+
+/* Define the vehicle */
+item(FEAT_AIRCRAFT, air_c142, 36) {
+    property {
+        /* Properties common to all vehicle types */
+        name: string(STR_ORNITHOPTER_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(2000,01,01);
+        model_life: 255;
+        vehicle_life: 30;
+        reliability_decay: 10;
+        refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
+        loading_speed: 20;
+        cost_factor: 10;
+        running_cost_factor: 60;
+        cargo_age_period: 185; //74=1 day
+
+        /* Aircraft-specific properties */
+        sprite_id: SPRITE_ID_NEW_AIRCRAFT;
+        speed: 500 km/h;
+        range: 512; // 0 for unlimited, 0..2894
+        misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
+        refit_cost: 0; // Refitting is free
+        aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
+        acceleration: 10;
+        passenger_capacity: 32;
+        mail_capacity: 8;
+        sound_effect: SOUND_TAKEOFF_HELICOPTER;
+    }
+
+    /* Define graphics for various cargo types, as well as the capacity callback */
+    graphics {
+        purchase: ss_ac_purchase;
+        default: sw_ornithopter_anim;
+        rotor: no_rotor;
+        colour_mapping: sw_ac_colour;
+    }
+}
+
+/* END Ornithopter */
+
+sort(FEAT_AIRCRAFT,[canadair_cl84, ltv_c142, dornier_do31, ltv_downtowner, bell_boeing_v22_osprey, ducted_fan_mk1, karem_aerotrain, ducted_fan_mk2, tiltjet, fanwing, skyrambler, scramjet, air_c142]);
 
 if (param[1] == 2) {
     disable_item(FEAT_AIRCRAFT, 0,6);
 }
+
 if (param[1] == 1) {
     disable_item(FEAT_AIRCRAFT, 30,35);
+}
+
+if (param[2] == 0) {
+    disable_item(FEAT_AIRCRAFT, 36);
 }
