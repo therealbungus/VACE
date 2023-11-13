@@ -1,11 +1,11 @@
 grf {
-    grfid: "BN\01\03";                  // todo: add livery, range toggle, better cost values
+    grfid: "BN\01\03";                  // todo: add livery
     name: string(STR_GRF_NAME);
     desc: string(STR_GRF_DESC);
     url: string(STR_GRF_URL);
     version: 1;
     min_compatible_version: 1;
-    param 1 {
+    param 0 {
         // real vs fiction
     	rvf {
     		type: int;
@@ -21,7 +21,7 @@ grf {
     		};
     	}
     }
-    param 2 {
+    param 1 {
         // ornithopter toggle
     	orni_toggle {
     		type: bool;
@@ -30,12 +30,29 @@ grf {
     		def_value: 0;
     	}
     }
+    param 2 {
+        // rangeless toggle
+    	range_toggle {
+    		type: bool;
+    		name: string(STR_PARAM_RANGE_NAME);
+    		desc: string(STR_PARAM_RANGE_DESC);
+    		def_value: 0;
+    	}
+    }
 }
 
-// see explanation here: https://newgrf-specs.tt-wiki.net/wiki/NML:Setting_base_costs
+/*
+see explanation here: https://newgrf-specs.tt-wiki.net/wiki/NML:Setting_base_costs
+calculating values    https://newgrf-specs.tt-wiki.net/wiki/User:Pikkabird
+
+(s * s / 25000) + (c * 0.2) + ((2000 - y) * 0.1)
+s = speed in km/h, c = passenger capacity, y = year of introduction.
+
+*/
+
 basecost {
- 	PR_BUILD_VEHICLE_AIRCRAFT: 1; 
- 	PR_RUNNING_AIRCRAFT: 2;
+ 	PR_BUILD_VEHICLE_AIRCRAFT: 0; 
+ 	PR_RUNNING_AIRCRAFT: 5;
 }
 
 /* 64x16x64 */
@@ -211,12 +228,12 @@ item(FEAT_AIRCRAFT, dornier_do31, 1) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 40;
-        running_cost_factor: 40;
+        cost_factor: 27;
+        running_cost_factor: 27;
         cargo_age_period: 185; //2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 650 km/h;
-        range: 450; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 450 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -309,12 +326,12 @@ item(FEAT_AIRCRAFT, ltv_c142, 2) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 20;
-        running_cost_factor: 20;
+        cost_factor: 18;
+        running_cost_factor: 18;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 463 km/h;
-        range: 1525; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 1525 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -343,12 +360,12 @@ item(FEAT_AIRCRAFT, ltv_downtowner, 3) {
         refittable_cargo_classes: bitmask(CC_PASSENGERS);
 //      non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 30;
-        running_cost_factor: 30;
+        cost_factor: 22;
+        running_cost_factor: 22;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 470 km/h;
-        range: 1525; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 1525 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -442,12 +459,12 @@ item(FEAT_AIRCRAFT, canadair_cl84, 4) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 10;
-        running_cost_factor: 10;
+        cost_factor: 15;
+        running_cost_factor: 15;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 484 km/h;
-        range: 170; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 170 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -547,12 +564,12 @@ item(FEAT_AIRCRAFT, bell_boeing_v22_osprey, 5) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 40;
-        running_cost_factor: 40;
+        cost_factor: 14;
+        running_cost_factor: 14;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 445 km/h;
-        range: 557; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 557 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -646,12 +663,12 @@ item(FEAT_AIRCRAFT, karem_aerotrain, 6) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 20;
-        cost_factor: 40;
-        running_cost_factor: 40;
+        cost_factor: 37;
+        running_cost_factor: 37;
         cargo_age_period: 185; // 2.5 days
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 611 km/h;
-        range: 1412; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 1412 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -709,11 +726,11 @@ item(FEAT_AIRCRAFT, fanwing, 30) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 90;
-        running_cost_factor: 90;
+        cost_factor: 48;
+        running_cost_factor: 48;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 800 km/h;
-        range: 1024; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 1024 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -758,7 +775,7 @@ item(FEAT_AIRCRAFT, ducted_fan_mk1, 31) {
         running_cost_factor: 30;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 650 km/h;
-        range: 512; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 512 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -803,11 +820,11 @@ item(FEAT_AIRCRAFT, ducted_fan_mk2, 32) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 40;
-        running_cost_factor: 40;
+        cost_factor: 34;
+        running_cost_factor: 34;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 650 km/h;
-        range: 1024; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 1024 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -851,11 +868,11 @@ item(FEAT_AIRCRAFT, skyrambler, 33) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 50;
-        running_cost_factor: 50;
+        cost_factor: 43;
+        running_cost_factor: 43;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 1024 km/h;
-        range: 2048; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 2048 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -912,11 +929,11 @@ item(FEAT_AIRCRAFT, scramjet, 34) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 70;
-        running_cost_factor: 70;
+        cost_factor: 123;
+        running_cost_factor: 123;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
-        speed: 3280 km/h;
-        range: 4096; // 0 for unlimited, 0..2894
+        speed: 1680 km/h;
+        range: (range_toggle == 0) ? 4096 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -975,11 +992,11 @@ item(FEAT_AIRCRAFT, tiltjet, 35) {
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         non_refittable_cargo_classes: bitmask(CC_LIQUID,CC_HAZARDOUS);
         loading_speed: 10;
-        cost_factor: 90;
-        running_cost_factor: 90;
+        cost_factor: 53;
+        running_cost_factor: 53;
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 870 km/h;
-        range: 1024; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 1024 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -1047,14 +1064,14 @@ item(FEAT_AIRCRAFT, air_c142, 36) {
         reliability_decay: 10;
         refittable_cargo_classes: ALL_NORMAL_CARGO_CLASSES;
         loading_speed: 20;
-        cost_factor: 10;
-        running_cost_factor: 60;
+        cost_factor: 16;
+        running_cost_factor: 16;
         cargo_age_period: 185; //74=1 day
 
         /* Aircraft-specific properties */
         sprite_id: SPRITE_ID_NEW_AIRCRAFT;
         speed: 500 km/h;
-        range: 512; // 0 for unlimited, 0..2894
+        range: (range_toggle == 0) ? 512 : 0; // 0 for unlimited, 0..2894
         misc_flags: bitmask(AIRCRAFT_FLAG_2CC, AIRCRAFT_FLAG_AUTOREFIT);
         refit_cost: 0; // Refitting is free
         aircraft_type: AIRCRAFT_TYPE_HELICOPTER;
@@ -1070,6 +1087,7 @@ item(FEAT_AIRCRAFT, air_c142, 36) {
         default: sw_ornithopter_anim;
         rotor: no_rotor;
         colour_mapping: sw_ac_colour;
+        additional_text: string(STR_ORNITHOPTER_DESC);
     }
 }
 

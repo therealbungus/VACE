@@ -11,6 +11,8 @@ STR_PARAM_RVF_OPT_1		:Real aircraft only
 STR_PARAM_RVF_OPT_2		:Fictional aircraft only
 STR_PARAM_ORNI_NAME     :Dragonfly Ornithopter Toggle
 STR_PARAM_ORNI_DESC     :Fun aircraft based off a dragonfly. Enable if you would like it in your game.
+STR_PARAM_RANGE_NAME    :Rangeless Mode
+STR_PARAM_RANGE_DESC    :Gives all aircraft unlimited range.
 
 # Real Aircraft
 STR_BELL_BOEING_V22_OSPREY_NAME		:Bell Boeing V-22 Osprey
@@ -52,3 +54,4 @@ STR_SKYRAMBLER_NAME					:KAW Skyrambler
 STR_SKYRAMBLER_DESC					:{BLACK}Aircraft Type: {GOLD}Vector Thrust VTOL{}{BLACK}Airport Type: {GOLD}Any
 
 STR_ORNITHOPTER_NAME                :Dragonfly Ornithopter
+STR_ORNITHOPTER_DESC                :{BLACK}Aircraft Type: {GOLD}Giant Dragonfly{}{BLACK}Airport Type: {GOLD}Any
